@@ -1,0 +1,18 @@
+pluginManagement {
+    repositories {
+        google()
+        gradlePluginPortal()
+        maven { url = uri("$rootDir/../../build/repository") }
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "marathon") {
+                useModule("com.malinskiy.marathon:marathon-gradle-plugin:${requested.version}")
+            }
+        }
+    }
+}
+
+rootProject.name='My Kotlin Messenger'
+rootProject.buildFileName = "build.gradle"
+include ':app'
