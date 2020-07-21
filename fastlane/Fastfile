@@ -1,0 +1,41 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc 'Run unit tests using the mango plugin'
+  lane :unit_tests do
+    run_dockerized_task(
+      docker_image: 'joesss/mango-base:latest',
+      android_task: './gradlew testDebug',
+      is_running_on_emulator: false,
+      pull_latest_image: true,
+      pre_action: 'yes | sdkmanager --licenses && yes | sdkmanager --update'
+    )
+  end
+
+  desc 'Run espresso tests on docker images'
+  lane :espresso_tests do
+    run_dockerized_task(
+      container_name: 'espresso_container',
+      docker_image: 'joesss/mango-docker:latest',
+      container_timeout: 120,
+      android_task: './gradlew marathon',
+      post_actions: 'adb logcat -d > logcat.txt',
+      pull_latest_image: true
+    )
+  end
+end
